@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card shadow-sm p-4">
+
+    <h2 class="mb-3">Expediente del Paciente</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>Nombre:</strong> {{ paciente.nombre }}</p>
+            <p><strong>Edad:</strong> {{ paciente.edad }}</p>
+            <p><strong>Estado Civil:</strong> {{ paciente.estado_civil }}</p>
+        </div>
+
+        <div class="col-md-6">
+            <p><strong>Religión:</strong> {{ paciente.religion }}</p>
+            <p><strong>Ocupación:</strong> {{ paciente.ocupacion }}</p>
+            <p><strong>Procedencia:</strong> {{ paciente.procedencia }}</p>
+            <p><strong>Telefono:</strong> {{ paciente.telefono }}</p>
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- HISTORIAS CLINICAS -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Historias Clínicas</h4>
+        <a href="{% url 'agregar_historia' paciente.id %}" class="btn btn-primary btn-sm">
+            + Nueva Historia
+        </a>
+    </div>
+
+    {% if historias %}
+        <div class="accordion" id="accordionHistorias">
+            {% for h in historias %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading{{ h.id }}">
+                        <button class="accordion-button collapsed" type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#collapse{{ h.id }}">
+                            Historia del {{ h.fecha_creacion|date:"d/m/Y H:i" }}
+                        </button>
+                    </h2>
+
+                    <div id="collapse{{ h.id }}" class="accordion-collapse collapse"
+                         data-bs-parent="#accordionHistorias">
+                        <div class="accordion-body">
+
+                            <p><strong>Motivo de consulta:</strong> {{ h.motivo_consulta }}</p>
+                            <p><strong>Historia de la enfermedad:</strong> {{ h.historia_enfermedad }}</p>
+
+                            <hr>
+
+                            <h6><strong>Antecedentes</strong></h6>
+                            <p><strong>Médicos:</strong> {{ h.medicos }}</p>
+                            <p><strong>Quirúrgicos:</strong> {{ h.quirurgicos }}</p>
+                            <p><strong>Alérgicos:</strong> {{ h.alergicos }}</p>
+                            <p><strong>Traumáticos:</strong> {{ h.traumaticos }}</p>
+
+                            <hr>
+
+                            <h6><strong>Ginecoobstétricos</strong></h6>
+                            <p><strong>G:</strong> {{ h.g }} | <strong>P:</strong> {{ h.p }} | <strong>C:</strong> {{ h.c }} | <strong>A:</strong> {{ h.a }}</p>
+                            <p><strong>HV:</strong> {{ h.hv }} | <strong>HM:</strong> {{ h.hm }}</p>
+                            <p><strong>Menarquia:</strong> {{ h.menarquia }}</p>
+                            <p><strong>Coitarquia:</strong> {{ h.coitarquia }}</p>
+                            <p><strong>No. de parejas sexuales:</strong> {{ h.no_parejas }}</p>
+                            <p><strong>FUR:</strong> {{ h.fur }}</p>
+                            <p><strong>Ciclos menstruales:</strong> {{ h.ciclos_menstruales }}</p>
+                            <p><strong>Planificación familiar:</strong> {{ h.planificacion_familiar }}</p>
+
+                            <hr>
+
+                            <h6><strong>Examen físico</strong></h6>
+                            <p><strong>PA:</strong> {{ h.pa }} | <strong>FC:</strong> {{ h.fc }} | <strong>FR:</strong> {{ h.fr }}</p>
+                            <p><strong>T:</strong> {{ h.temperatura }} | <strong>SO2:</strong> {{ h.so2 }}</p>
+                            <p><strong>Peso:</strong> {{ h.peso }} | <strong>Talla:</strong> {{ h.talla }} | <strong>IMC:</strong> {{ h.imc }}</p>
+
+                            <hr>
+
+                            <p><strong>Impresión clínica:</strong> {{ h.impresion_clinica }}</p>
+                            <p><strong>Tratamiento:</strong> {{ h.tratamiento }}</p>
+                            <p><strong>Laboratorios:</strong> {{ h.laboratorios }}</p>
+                            <p><strong>Próxima cita:</strong> {{ h.proxima_cita }}</p>
+
+                            <a href="{% url 'historia_pdf' h.id %}" class="btn btn-danger btn-sm mt-3">
+                                Descargar PDF
+                            </a>
+
+                            <a href="{% url 'crear_receta' h.id %}" class="btn btn-primary btn-sm mt-2">
+    + Crear Receta
+</a>
+    
+<hr>
+<h6 class="text-success">Recetas Médicas</h6>
+
+{% if h.recetas.all.exists %}
+    <ul class="list-group">
+        {% for r in h.recetas.all %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                    Receta del {{ r.fecha|date:"d/m/Y" }}
+                </span>
+
+                <a href="{% url 'receta_pdf' r.id %}" class="btn btn-danger btn-sm">
+                    Descargar PDF
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p class="text-muted">No hay recetas creadas.</p>
+{% endif %} 
+
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <div class="alert alert-warning">
+            No hay historias clínicas registradas para este paciente.
+        </div>
+    {% endif %}
+
+    <hr class="my-4">
+
+    <!-- EXAMENES -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Exámenes / Ultrasonidos</h4>
+        <a href="{% url 'subir_examen' paciente.id %}" class="btn btn-success btn-sm">
+            + Subir Examen
+        </a>
+    </div>
+
+    {% if examenes %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-success">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                        <th>Archivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in examenes %}
+                        <tr>
+                            <td>{{ e.fecha|date:"d/m/Y H:i" }}</td>
+                            <td>{{ e.descripcion }}</td>
+                            <td>
+                                <a href="{{ e.archivo.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    Ver / Descargar
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+        <div class="alert alert-info">
+            No hay exámenes adjuntos todavía.
+        </div>
+    {% endif %}
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+{% endblock %}

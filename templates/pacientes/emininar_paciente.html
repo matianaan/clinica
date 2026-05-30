@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Eliminar Paciente</h2>
+
+<p>¿Seguro que quieres eliminar a {{ paciente.nombre }}?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Sí, eliminar</button>
+</form>
+
+{% endblock %} 

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-3">👩‍⚕️ Pacientes</h2>
+
+    <!-- BOTÓN NUEVO PACIENTE -->
+    <a href="{% url 'agregar_paciente' %}" class="btn btn-primary mb-3">
+        + Nuevo Paciente
+    </a>
+
+    <!-- BUSCADOR -->
+    <form method="GET" class="mb-3">
+        <input type="text" name="buscar" placeholder="Buscar paciente..."
+               class="form-control w-50 d-inline">
+        <button type="submit" class="btn btn-success">Buscar</button>
+    </form>
+
+    <!-- LISTA -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <table class="table table-hover">
+
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for p in pacientes %}
+                        <tr>
+                            <td>
+                                <strong>{{ p.nombre }}</strong><br>
+                                <small>
+                                    {{ p.edad }} años - {{ p.estado_civil }}
+                                </small>
+                            </td>
+
+                            <td>
+                                <a href="{% url 'detalle_paciente' p.id %}" class="btn btn-info btn-sm">
+                                    Expediente
+                                </a>
+
+                                <a href="{% url 'editar_paciente' p.id %}" class="btn btn-warning btn-sm">
+                                    Editar
+                                </a>
+
+                                <a href="{% url 'eliminar_paciente' p.id %}" class="btn btn-danger btn-sm">
+                                    Eliminar
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2" class="text-center">
+                                No hay pacientes registrados
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

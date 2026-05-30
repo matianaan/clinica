@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card shadow p-4">
+
+    <h3 class="mb-3 text-primary">Crear Receta Médica</h3>
+
+    <p><strong>Paciente:</strong> {{ paciente.nombre }}</p>
+    <p><strong>Historia Clínica:</strong> {{ historia.fecha_creacion|date:"d/m/Y H:i" }}</p>
+
+    <hr>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-success">
+            Guardar Receta
+        </button>
+
+        <a href="{% url 'detalle_paciente' paciente.id %}" class="btn btn-secondary">
+            Cancelar
+        </a>
+    </form>
+
+</div>
+
+{% endblock %}
